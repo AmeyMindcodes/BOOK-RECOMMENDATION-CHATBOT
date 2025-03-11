@@ -23,7 +23,7 @@
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="../static/style.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
   </head>
   <body>
     <!-- Navbar -->
@@ -76,11 +76,11 @@
             <div class="swiper-slide">
               <div class="book-card">
                 <div class="book-cover">
-                  <img src="{{ book.cover if book.cover else 'https://via.placeholder.com/150x225?text=No+Cover' }}" alt="{{ book.title }}">
+                  <img src="{{ book.cover_url if book.cover_url else url_for('static', filename='images/default-cover.jpg') }}" alt="{{ book.title }}">
                 </div>
                 <div class="book-info">
                   <h3 class="book-title">{{ book.title }}</h3>
-                  <button class="details-btn" data-title="{{ book.title }}">Details</button>
+                  <button class="details-btn" data-id="{{ book.id }}">Details</button>
                 </div>
               </div>
             </div>
@@ -103,11 +103,11 @@
             <div class="swiper-slide">
               <div class="book-card">
                 <div class="book-cover">
-                  <img src="{{ book.cover if book.cover else 'https://via.placeholder.com/150x225?text=No+Cover' }}" alt="{{ book.title }}">
+                  <img src="{{ book.cover_url if book.cover_url else url_for('static', filename='images/default-cover.jpg') }}" alt="{{ book.title }}">
                 </div>
                 <div class="book-info">
                   <h3 class="book-title">{{ book.title }}</h3>
-                  <button class="details-btn" data-title="{{ book.title }}">Details</button>
+                  <button class="details-btn" data-id="{{ book.id }}">Details</button>
                 </div>
               </div>
             </div>
@@ -130,11 +130,11 @@
             <div class="swiper-slide">
               <div class="book-card">
                 <div class="book-cover">
-                  <img src="{{ book.cover if book.cover else 'https://via.placeholder.com/150x225?text=No+Cover' }}" alt="{{ book.title }}">
+                  <img src="{{ book.cover_url if book.cover_url else url_for('static', filename='images/default-cover.jpg') }}" alt="{{ book.title }}">
                 </div>
                 <div class="book-info">
                   <h3 class="book-title">{{ book.title }}</h3>
-                  <button class="details-btn" data-title="{{ book.title }}">Details</button>
+                  <button class="details-btn" data-id="{{ book.id }}">Details</button>
                 </div>
               </div>
             </div>
@@ -171,7 +171,7 @@
               <i class="fas fa-search"></i>
             </div>
             <h3>Smart Search</h3>
-            <p>Find books by title, author, publisher, or genre with our intelligent search system.</p>
+            <p>Find books by title, author, or genre with our intelligent search system.</p>
           </div>
           <div class="feature-card" data-aos="fade-up" data-aos-delay="400">
             <div class="feature-icon">
@@ -190,7 +190,7 @@
         <button class="close-modal-btn"><i class="fas fa-times"></i></button>
         <div class="book-details-container">
           <div class="book-cover-large">
-            <img id="modalBookCover" src="https://via.placeholder.com/300x450?text=Loading..." alt="Book Cover">
+            <img id="modalBookCover" src="{{ url_for('static', filename='images/default-cover.jpg') }}" alt="Book Cover">
           </div>
           <div class="book-details">
             <h2 id="modalBookTitle">Loading...</h2>
@@ -203,16 +203,16 @@
     </div>
 
     <!-- Chatbot Button -->
-    <button onclick="openChatBot()" class="chatbotbutton">
+    <button class="chatbotbutton" onclick="openChatBot()">
       <i class="fas fa-robot"></i>
     </button>
 
     <!-- Chatbot Container -->
-    <div class="container chatbot-container">
+    <div class="chatbot-container">
       <div class="chatbox" id="chatbox">
         <div class="header">
           <h4><i class="fas fa-robot"></i> BookBuddy</h4>
-          <button onclick="closeChatBot()" class="close-btn">
+          <button class="close-btn" onclick="closeChatBot()">
             <i class="fas fa-times"></i>
           </button>
         </div>
@@ -282,7 +282,17 @@
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     
     <!-- Custom JS -->
-    <script src="../static/chatbot.js"></script>
-    <script src="../static/main.js"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/chatbot.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/parallax.js') }}"></script>
+    
+    <script>
+      // Initialize AOS
+      AOS.init({
+        duration: 800,
+        easing: 'ease-in-out',
+        once: true
+      });
+    </script>
   </body>
 </html>

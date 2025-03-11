@@ -1,4 +1,4 @@
-const chatbotContainer = document.getElementById("container");
+const chatbotContainer = document.querySelector(".container");
 const chatbox = document.getElementById("chatbox");
 const chatbody = document.getElementById("chatbody");
 const messageTextBox = document.getElementById("userInput");
@@ -11,95 +11,217 @@ const questions = [
   "Alternatively, you can choose to get the book ID based on the title of the book.",
 ];
 
+// Initialize the chatbot
+document.addEventListener("DOMContentLoaded", function() {
+  // Add click event listeners to suggestion list items
+  const suggestionItems = document.querySelectorAll(".suggestion-list li");
+  suggestionItems.forEach(item => {
+    item.addEventListener("click", function() {
+      messageTextBox.value = this.textContent;
+      sendMsg();
+    });
+  });
+});
+
 function openChatBot() {
-  continueConversation("push_questions", null);
-  if (chatbox.style.display) {
-    chatbox.style.display = "";
+  if (chatbox.style.display === "flex") {
+    chatbox.style.display = "none";
     return;
   }
   chatbox.style.display = "flex";
+  chatbody.scrollTop = chatbody.scrollHeight;
+  
+  // Focus on the input field
+  setTimeout(() => {
+    messageTextBox.focus();
+  }, 300);
 }
+
+function closeChatBot() {
+  chatbox.style.display = "none";
+}
+
+// Event listeners
 sendbutton.addEventListener("click", sendMsg);
-document.addEventListener("keypress", (event) => {
-  if (event.key === "Enter" && messageTextBox.value !== "") {
+messageTextBox.addEventListener("keypress", (event) => {
+  if (event.key === "Enter" && messageTextBox.value.trim() !== "") {
     sendMsg();
-    chatbody.scrollTop = chatbody.scrollHeight;
-  } else if (
-    event.key === "Enter" &&
-    messageTextBox.value === "" &&
-    chatbox.style.display === "flex"
-  ) {
-    alert("Please enter a message");
   }
 });
-function chatBotSendList(data) {
-  if (Array.isArray(data) === false) {
-    let message = document.createElement("div");
-    message.classList.add("message");
-    message.classList.add("isbot");
-    let messageText = document.createElement("p");
-    messageText.classList.add("text");
-    messageText.innerText = data;
-    message.appendChild(messageText);
-    chatbody.appendChild(message);
-    chatbody.scrollTop = chatbody.scrollHeight;
-    return;
-  }
-  let orderedList = document.createElement("ol");
-  orderedList.classList.add("message");
-  orderedList.classList.add("isbot");
-  data.map((item) => {
-    let listItem = document.createElement("li");
-    listItem.innerText = item;
-    listItem.style.width = "90%";
-    orderedList.appendChild(listItem);
-  });
-  chatbody.appendChild(orderedList);
+
+// Function to display user message
+function displayUserMessage(message) {
+  const messageDiv = document.createElement("div");
+  messageDiv.classList.add("message", "isme");
+  
+  const messageText = document.createElement("p");
+  messageText.classList.add("text");
+  messageText.textContent = message;
+  
+  messageDiv.appendChild(messageText);
+  chatbody.appendChild(messageDiv);
   chatbody.scrollTop = chatbody.scrollHeight;
 }
 
-async function continueConversation(continue_id, query) {
-  switch (continue_id) {
-    case "push_questions": {
-      chatBotSendList(questions);
-      break;
-    }
-    default:
-      await fetch(`http://127.0.0.1:5000/recommendations/${continue_id}`, {
-        method: "POST",
-        body: JSON.stringify({ query: query }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-        .then((response) => {
-          return response.json();
-        })
-        .then((data) => {
-          chatBotSendList(data);
-        });
+// Function to display bot message
+function displayBotMessage(message) {
+  const messageDiv = document.createElement("div");
+  messageDiv.classList.add("message", "isbot");
+  
+  const messageText = document.createElement("p");
+  messageText.classList.add("text");
+  messageText.textContent = message;
+  
+  messageDiv.appendChild(messageText);
+  chatbody.appendChild(messageDiv);
+  chatbody.scrollTop = chatbody.scrollHeight;
+}
+
+// Function to display book list
+function displayBookList(books) {
+  const listElement = document.createElement("ol");
+  listElement.classList.add("isbot");
+  
+  books.forEach(book => {
+    const listItem = document.createElement("li");
+    listItem.textContent = book;
+    listElement.appendChild(listItem);
+  });
+  
+  chatbody.appendChild(listElement);
+  chatbody.scrollTop = chatbody.scrollHeight;
+}
+
+// Function to display typing indicator
+function showTypingIndicator() {
+  const typingDiv = document.createElement("div");
+  typingDiv.classList.add("message", "isbot", "typing-indicator");
+  typingDiv.innerHTML = '<span></span><span></span><span></span>';
+  chatbody.appendChild(typingDiv);
+  chatbody.scrollTop = chatbody.scrollHeight;
+  return typingDiv;
+}
+
+// Function to remove typing indicator
+function removeTypingIndicator(indicator) {
+  if (indicator && indicator.parentNode) {
+    indicator.parentNode.removeChild(indicator);
   }
 }
 
-function sendMsg() {
-  if (messageTextBox.value === "") {
-    alert("Please enter a message");
+// Function to handle sending messages
+async function sendMsg() {
+  const userMessage = messageTextBox.value.trim();
+  
+  if (userMessage === "") {
     return;
   }
-  let message = document.createElement("div");
-  message.classList.add("message");
-  message.classList.add("isme");
-  let messageText = document.createElement("p");
-  messageText.classList.add("text");
-  messageText.innerText = messageTextBox.value;
-  message.appendChild(messageText);
-  chatbody.appendChild(message);
-  const messageValue = messageTextBox.value;
-  const splitted = messageValue.split(",");
-  if (splitted.length == 2) {
-    continueConversation(splitted[0].trim(), splitted[1].trim());
-    messageTextBox.value = "";
-    return;
-  }
+  
+  // Display user message
+  displayUserMessage(userMessage);
+  
+  // Clear input field
   messageTextBox.value = "";
+  
+  // Show typing indicator
+  const typingIndicator = showTypingIndicator();
+  
+  // Check if it's a legacy format (number, query)
+  const splitted = userMessage.split(",");
+  if (splitted.length == 2 && !isNaN(splitted[0].trim())) {
+    // Legacy format handling
+    try {
+      const response = await fetch(`/recommendations/${splitted[0].trim()}`, {
+        method: "POST",
+        body: JSON.stringify({ query: splitted[1].trim() }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      
+      const data = await response.json();
+      
+      // Remove typing indicator
+      removeTypingIndicator(typingIndicator);
+      
+      // Display results
+      if (Array.isArray(data)) {
+        displayBookList(data);
+      } else {
+        displayBotMessage(data);
+      }
+    } catch (error) {
+      removeTypingIndicator(typingIndicator);
+      displayBotMessage("Sorry, I encountered an error. Please try again.");
+      console.error("Error:", error);
+    }
+  } else {
+    // New AI chat format
+    try {
+      const response = await fetch("/chat", {
+        method: "POST",
+        body: JSON.stringify({ message: userMessage }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      
+      const data = await response.json();
+      
+      // Remove typing indicator
+      removeTypingIndicator(typingIndicator);
+      
+      // Display response message
+      displayBotMessage(data.response);
+      
+      // If there are books to display
+      if (data.books && Array.isArray(data.books) && data.books.length > 0) {
+        displayBookList(data.books);
+      }
+    } catch (error) {
+      removeTypingIndicator(typingIndicator);
+      displayBotMessage("Sorry, I encountered an error. Please try again.");
+      console.error("Error:", error);
+    }
+  }
 }
+
+// Add CSS for typing indicator
+const style = document.createElement('style');
+style.textContent = `
+  .typing-indicator {
+    display: flex;
+    align-items: center;
+    padding: 15px 20px;
+  }
+  
+  .typing-indicator span {
+    height: 8px;
+    width: 8px;
+    float: left;
+    margin: 0 1px;
+    background-color: #9E9EA1;
+    display: block;
+    border-radius: 50%;
+    opacity: 0.4;
+  }
+  
+  .typing-indicator span:nth-of-type(1) {
+    animation: 1s blink infinite 0.3333s;
+  }
+  
+  .typing-indicator span:nth-of-type(2) {
+    animation: 1s blink infinite 0.6666s;
+  }
+  
+  .typing-indicator span:nth-of-type(3) {
+    animation: 1s blink infinite 0.9999s;
+  }
+  
+  @keyframes blink {
+    50% {
+      opacity: 1;
+    }
+  }
+`;
+document.head.appendChild(style);
