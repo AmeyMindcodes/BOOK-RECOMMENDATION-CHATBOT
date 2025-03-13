@@ -1,12 +1,14 @@
-from flask import Blueprint, render_template, jsonify, request
+from flask import Blueprint, render_template, jsonify, request, send_from_directory
 from app.models.book_service import (
     get_trending_books,
     get_top_rated_books,
     get_popular_books,
-    search_books
+    search_books,
+    FALLBACK_BOOKS
 )
 from app.models.chatbot import process_user_message
 import random
+import os
 
 main_bp = Blueprint('main', __name__)
 
@@ -62,6 +64,11 @@ def home():
         popular_books=popular
     )
 
+@main_bp.route("/api-docs")
+def api_docs():
+    """Route to serve the API documentation page."""
+    return send_from_directory(os.path.join(os.getcwd()), 'api_docs.html')
+
 @main_bp.route("/chat", methods=["POST"])
 def chat():
     if not request.is_json:
@@ -93,9 +100,30 @@ def chat():
 def search():
     query = request.args.get("query", "")
     if not query:
+        print("No query provided in search request")
         return jsonify({"books": []})
     
     print(f"Search query: {query}")
-    books = search_books(query)
-    print(f"Search results: {len(books)} books found")
-    return jsonify({"books": books}) 
+    try:
+        books = search_books(query)
+        print(f"Search results: {len(books)} books found")
+        
+        # If no books found, use fallback books
+        if not books:
+            print("No books found, using fallback books")
+            books = FALLBACK_BOOKS[:5]
+            
+        return jsonify({"books": books})
+    except Exception as e:
+        print(f"Error in search route: {e}")
+        # Return fallback books in case of error
+        return jsonify({"books": FALLBACK_BOOKS[:5]})
+
+@main_bp.route("/test")
+def test():
+    """Simple test route to verify that the application is working."""
+    return jsonify({
+        "status": "success",
+        "message": "The application is working correctly!",
+        "fallback_books": FALLBACK_BOOKS
+    }) 

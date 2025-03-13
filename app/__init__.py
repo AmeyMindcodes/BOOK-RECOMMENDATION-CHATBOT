@@ -1,17 +1,17 @@
 from flask import Flask
 from flask_cors import CORS
 import os
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 
 # Load environment variables
-load_dotenv()
+# load_dotenv()
 
 def create_app(test_config=None):
     # Create and configure the app
     app = Flask(__name__, instance_relative_config=True)
     
-    # Enable CORS
-    CORS(app)
+    # Enable CORS for all routes and origins
+    CORS(app, resources={r"/*": {"origins": "*"}})
     
     # Set configuration
     app.config.from_mapping(
