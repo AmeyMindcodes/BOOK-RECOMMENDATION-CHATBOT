@@ -1,8 +1,8 @@
-# BookBuddy: AI-Powered Book Recommendation Chatbot
+# BookBot AI: AI-Powered Book Recommendation Chatbot
 
-BookBuddy is an intelligent chatbot designed to help book enthusiasts discover their next great read. Leveraging AI and real-time book APIs, BookBuddy provides personalized book recommendations based on various criteria such as author, genre, and content similarity.
+BookBot AI is an intelligent chatbot designed to help book enthusiasts discover their next great read. Leveraging AI and real-time book APIs, BookBot AI provides personalized book recommendations based on various criteria such as author, genre, and content similarity.
 
-![BookBuddy Screenshot](https://images.unsplash.com/photo-1507842217343-583bb7270b66?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80)
+![BookBot AI Screenshot](https://images.unsplash.com/photo-1507842217343-583bb7270b66?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80)
 
 ## Features
 
@@ -27,8 +27,8 @@ BookBuddy is an intelligent chatbot designed to help book enthusiasts discover t
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/yourusername/book-recommendation-chatbot.git
-cd book-recommendation-chatbot
+git clone https://github.com/yourusername/ai-book-recommender.git
+cd ai-book-recommender
 ```
 
 ### 2. Create a virtual environment
@@ -49,41 +49,19 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 4. Set up API keys
-
-Create a `.env` file in the root directory with the following content:
-
-```
-# Flask configuration
-FLASK_APP=run.py
-FLASK_ENV=development
-SECRET_KEY=your_secret_key_here
-
-# Google Books API
-GOOGLE_BOOKS_API_KEY=your_google_books_api_key
-
-# NYT Books API (optional)
-NYT_BOOKS_API_KEY=your_nyt_api_key
-
-# Debug mode
-DEBUG=True
-```
-
-Replace `your_google_books_api_key` with your actual Google Books API key. You can get one from the [Google Cloud Console](https://console.cloud.google.com/).
-
-### 5. Run the application
+### 4. Run the application
 
 ```bash
 python run.py
 ```
 
-The application will be available at http://127.0.0.1:5000/
+The application will be available at http://127.0.0.1:5004/
 
 ## Usage
 
 1. Open the application in your web browser
-2. Click on the chat button in the bottom right corner or the "Start Chatting" button
-3. Ask BookBuddy for recommendations using natural language:
+2. Use the search bar to search for books
+3. Chat with BookBot AI for recommendations using natural language:
    - "Find books by Stephen King"
    - "Show me popular fantasy books"
    - "What are the highest rated books?"
@@ -93,7 +71,7 @@ The application will be available at http://127.0.0.1:5000/
 
 ## How It Works
 
-BookBuddy uses several APIs and techniques to provide book recommendations:
+BookBot AI uses several APIs and techniques to provide book recommendations:
 
 1. **Google Books API**: Used for searching books, getting book details, and finding similar books
 2. **Open Library API**: Used for trending and popular books
@@ -104,7 +82,7 @@ BookBuddy uses several APIs and techniques to provide book recommendations:
 ## Project Structure
 
 ```
-book-recommendation-chatbot/
+ai-book-recommender/
 ├── app/
 │   ├── __init__.py           # Flask application factory
 │   ├── api/                  # API routes
@@ -121,17 +99,18 @@ book-recommendation-chatbot/
 │   │   ├── css/
 │   │   │   └── style.css
 │   │   ├── js/
-│   │   │   ├── script.js
-│   │   │   ├── chatbot.js
-│   │   │   └── parallax.js
+│   │   │   └── script.js
 │   │   └── images/
 │   ├── templates/            # HTML templates
 │   │   └── index.html
 │   └── utils/                # Utility functions
 │       ├── __init__.py
 │       └── cache.py          # Caching system
-├── .env                      # Environment variables
+├── static/                   # Static assets (root level)
+│   ├── script.js
+│   └── style.css
 ├── .gitignore                # Git ignore file
+├── api_docs.html             # API documentation
 ├── requirements.txt          # Python dependencies
 ├── run.py                    # Application entry point
 └── README.md                 # Project documentation
@@ -139,7 +118,7 @@ book-recommendation-chatbot/
 
 ## API Integration
 
-BookBuddy integrates with the following APIs:
+BookBot AI integrates with the following APIs:
 
 ### Google Books API
 
@@ -165,7 +144,6 @@ Used for:
 - **Backend**: Python, Flask
 - **APIs**: Google Books API, Open Library API, NYT Books API
 - **Frontend**: HTML, CSS, JavaScript
-- **UI Libraries**: Swiper.js for carousels
 - **Deployment**: Gunicorn (for production)
 
 ## License

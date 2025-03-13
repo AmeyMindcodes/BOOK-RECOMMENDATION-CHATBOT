@@ -3,296 +3,282 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>BookBuddy - AI Book Recommendation Chatbot</title>
-    
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/2232/2232688.png">
-    
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-    
-    <!-- Swiper CSS for carousels -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
-    
-    <!-- AOS Animation Library -->
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+    <title>BookBot AI</title>
+    <style>
+      body {
+        font-family: Georgia, serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f9f7f1;
+        color: #333;
+        line-height: 1.6;
+      }
+      h1 {
+        color: #5d4037;
+        text-align: center;
+        margin-bottom: 30px;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 10px;
+      }
+      .section {
+        margin-bottom: 30px;
+        background: #fff;
+        padding: 15px;
+        border-radius: 5px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      }
+      .book-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 15px;
+      }
+      .book {
+        text-align: center;
+      }
+      .book img {
+        height: 180px;
+        width: auto;
+        max-width: 100%;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        margin-bottom: 8px;
+      }
+      .book-title {
+        font-weight: bold;
+        font-size: 14px;
+        margin-bottom: 4px;
+      }
+      .book-author {
+        font-style: italic;
+        font-size: 12px;
+        color: #666;
+      }
+      .chat-container {
+        background: #fff;
+        border-radius: 5px;
+        padding: 15px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      }
+      .chat-messages {
+        height: 200px;
+        overflow-y: auto;
+        border: 1px solid #ddd;
+        padding: 10px;
+        margin-bottom: 10px;
+        background: #f9f7f1;
+        font-size: 14px;
+      }
+      .chat-input {
+        display: flex;
+      }
+      .chat-input input {
+        flex: 1;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 3px 0 0 3px;
+      }
+      .chat-input button {
+        padding: 8px 12px;
+        background-color: #8d6e63;
+        color: white;
+        border: none;
+        border-radius: 0 3px 3px 0;
+        cursor: pointer;
+      }
+      .search-container {
+        display: flex;
+        margin-bottom: 15px;
+      }
+      .search-container input {
+        flex: 1;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 3px 0 0 3px;
+      }
+      .search-container button {
+        padding: 8px 12px;
+        background-color: #8d6e63;
+        color: white;
+        border: none;
+        border-radius: 0 3px 3px 0;
+        cursor: pointer;
+      }
+      footer {
+        text-align: center;
+        margin-top: 30px;
+        font-size: 12px;
+        color: #777;
+      }
+    </style>
   </head>
   <body>
-    <!-- Navbar -->
-    <nav class="navbar">
-      <div class="container">
-        <a href="/" class="logo">
-          <i class="fas fa-book-open"></i> BookBuddy
-        </a>
-        <div class="nav-links">
-          <a href="#trending">Trending</a>
-          <a href="#top-rated">Top Rated</a>
-          <a href="#popular">Popular</a>
-          <a href="#about">About</a>
-        </div>
-        <button class="search-btn">
-          <i class="fas fa-search"></i>
-        </button>
-      </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <section class="hero-section">
-      <div class="hero-content" data-aos="fade-up">
-        <h1>Discover Your Next Great Read</h1>
-        <p>BookBuddy uses AI to recommend books tailored to your interests</p>
-        <button onclick="openChatBot()" class="start-chat-btn">
-          <i class="fas fa-robot"></i> Chat with BookBuddy
-        </button>
-      </div>
-      <div class="hero-overlay"></div>
-    </section>
-
-    <!-- Search Modal -->
-    <div class="search-modal">
+    <h1>BookBot AI</h1>
+    
+    <div class="section">
+      <p>Welcome to BookBot AI! Find your next great read with our simple book recommendation tool.</p>
+      
       <div class="search-container">
-        <input type="text" id="searchInput" placeholder="Search for books, authors, or genres...">
-        <button id="searchBtn"><i class="fas fa-search"></i></button>
-        <button class="close-search-btn"><i class="fas fa-times"></i></button>
+        <input type="text" id="searchInput" placeholder="Search for books...">
+        <button id="searchBtn">Search</button>
       </div>
-      <div class="search-results" id="searchResults"></div>
     </div>
-
-    <!-- Trending Books Section -->
-    <section class="books-section" id="trending" data-aos="fade-up">
-      <div class="container">
-        <h2 class="section-title">Trending Now <i class="fas fa-fire"></i></h2>
-        <div class="swiper trending-swiper">
-          <div class="swiper-wrapper">
-            {% for book in trending_books %}
-            <div class="swiper-slide">
-              <div class="book-card">
-                <div class="book-cover">
-                  <img src="{{ book.cover_url if book.cover_url else url_for('static', filename='images/default-cover.jpg') }}" alt="{{ book.title }}">
-                </div>
-                <div class="book-info">
-                  <h3 class="book-title">{{ book.title }}</h3>
-                  <button class="details-btn" data-id="{{ book.id }}">Details</button>
-                </div>
-              </div>
-            </div>
-            {% endfor %}
-          </div>
-          <div class="swiper-pagination"></div>
-          <div class="swiper-button-next"></div>
-          <div class="swiper-button-prev"></div>
+    
+    <div class="section">
+      <h2>Trending Books</h2>
+      <div class="book-list" id="trendingBooks">
+        <!-- Books will be loaded here -->
+        {% for book in trending_books %}
+        <div class="book">
+          <img src="{{ book.cover_url }}" alt="{{ book.title }}" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2232/2232688.png';">
+          <div class="book-title">{{ book.title }}</div>
+          <div class="book-author">{{ book.author }}</div>
         </div>
+        {% endfor %}
       </div>
-    </section>
-
-    <!-- Top Rated Books Section -->
-    <section class="books-section" id="top-rated" data-aos="fade-up">
-      <div class="container">
-        <h2 class="section-title">Top Rated <i class="fas fa-star"></i></h2>
-        <div class="swiper top-rated-swiper">
-          <div class="swiper-wrapper">
-            {% for book in top_rated_books %}
-            <div class="swiper-slide">
-              <div class="book-card">
-                <div class="book-cover">
-                  <img src="{{ book.cover_url if book.cover_url else url_for('static', filename='images/default-cover.jpg') }}" alt="{{ book.title }}">
-                </div>
-                <div class="book-info">
-                  <h3 class="book-title">{{ book.title }}</h3>
-                  <button class="details-btn" data-id="{{ book.id }}">Details</button>
-                </div>
-              </div>
-            </div>
-            {% endfor %}
-          </div>
-          <div class="swiper-pagination"></div>
-          <div class="swiper-button-next"></div>
-          <div class="swiper-button-prev"></div>
+    </div>
+    
+    <div class="section">
+      <h2>Chat with BookBot AI</h2>
+      <div class="chat-container">
+        <div class="chat-messages" id="chatMessages">
+          <div>Hello! I'm BookBot AI. How can I help you find your next book?</div>
         </div>
-      </div>
-    </section>
-
-    <!-- Popular Books Section -->
-    <section class="books-section" id="popular" data-aos="fade-up">
-      <div class="container">
-        <h2 class="section-title">Popular Books <i class="fas fa-thumbs-up"></i></h2>
-        <div class="swiper popular-swiper">
-          <div class="swiper-wrapper">
-            {% for book in popular_books %}
-            <div class="swiper-slide">
-              <div class="book-card">
-                <div class="book-cover">
-                  <img src="{{ book.cover_url if book.cover_url else url_for('static', filename='images/default-cover.jpg') }}" alt="{{ book.title }}">
-                </div>
-                <div class="book-info">
-                  <h3 class="book-title">{{ book.title }}</h3>
-                  <button class="details-btn" data-id="{{ book.id }}">Details</button>
-                </div>
-              </div>
-            </div>
-            {% endfor %}
-          </div>
-          <div class="swiper-pagination"></div>
-          <div class="swiper-button-next"></div>
-          <div class="swiper-button-prev"></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Features Section -->
-    <section class="features-section" id="about" data-aos="fade-up">
-      <div class="container">
-        <h2 class="section-title">Why BookBuddy?</h2>
-        <div class="features-grid">
-          <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
-            <div class="feature-icon">
-              <i class="fas fa-robot"></i>
-            </div>
-            <h3>AI-Powered</h3>
-            <p>Our advanced AI understands your preferences and recommends books you'll love.</p>
-          </div>
-          <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
-            <div class="feature-icon">
-              <i class="fas fa-globe"></i>
-            </div>
-            <h3>Real-Time Data</h3>
-            <p>Get the latest book information from multiple sources including Google Books and Open Library.</p>
-          </div>
-          <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
-            <div class="feature-icon">
-              <i class="fas fa-search"></i>
-            </div>
-            <h3>Smart Search</h3>
-            <p>Find books by title, author, or genre with our intelligent search system.</p>
-          </div>
-          <div class="feature-card" data-aos="fade-up" data-aos-delay="400">
-            <div class="feature-icon">
-              <i class="fas fa-fire"></i>
-            </div>
-            <h3>Trending Books</h3>
-            <p>Stay updated with the latest bestsellers and trending books in real-time.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Book Details Modal -->
-    <div class="book-details-modal">
-      <div class="modal-content">
-        <button class="close-modal-btn"><i class="fas fa-times"></i></button>
-        <div class="book-details-container">
-          <div class="book-cover-large">
-            <img id="modalBookCover" src="{{ url_for('static', filename='images/default-cover.jpg') }}" alt="Book Cover">
-          </div>
-          <div class="book-details">
-            <h2 id="modalBookTitle">Loading...</h2>
-            <div id="modalBookDetails">
-              <p>Loading book details...</p>
-            </div>
-          </div>
+        <div class="chat-input">
+          <input type="text" id="userInput" placeholder="Ask about books...">
+          <button id="sendBtn">Send</button>
         </div>
       </div>
     </div>
-
-    <!-- Chatbot Button -->
-    <button class="chatbotbutton" onclick="openChatBot()">
-      <i class="fas fa-robot"></i>
-    </button>
-
-    <!-- Chatbot Container -->
-    <div class="chatbot-container">
-      <div class="chatbox" id="chatbox">
-        <div class="header">
-          <h4><i class="fas fa-robot"></i> BookBuddy</h4>
-          <button class="close-btn" onclick="closeChatBot()">
-            <i class="fas fa-times"></i>
-          </button>
-        </div>
-        <div class="body" id="chatbody">
-          <div class="message isbot">
-            <p class="text">
-              Hello! I'm BookBuddy, your AI book recommendation assistant. I can help you find your next great read based on authors, titles, genres, or popularity.
-            </p>
-          </div>
-          <div class="message isbot">
-            <p class="text">
-              Try asking me things like:
-            </p>
-            <ul class="suggestion-list">
-              <li>Find books by Stephen King</li>
-              <li>Show me popular fantasy books</li>
-              <li>What are the highest rated books?</li>
-              <li>Find books similar to Harry Potter</li>
-              <li>Tell me about The Great Gatsby</li>
-              <li>What's trending now?</li>
-            </ul>
-          </div>
-        </div>
-        <div class="warning-container">
-          <i class="fas fa-lightbulb"></i>
-          <p>Type 'help' anytime to see what I can do!</p>
-        </div>
-        <div class="footer">
-          <input type="text" id="userInput" placeholder="Ask me about books..." />
-          <button id="send">
-            <i class="fas fa-paper-plane"></i>
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Footer -->
-    <footer class="footer">
-      <div class="container">
-        <div class="footer-content">
-          <div class="footer-logo">
-            <i class="fas fa-book-open"></i> BookBuddy
-          </div>
-          <div class="footer-links">
-            <a href="#trending">Trending</a>
-            <a href="#top-rated">Top Rated</a>
-            <a href="#popular">Popular</a>
-            <a href="#about">About</a>
-          </div>
-          <div class="social-links">
-            <a href="#"><i class="fab fa-twitter"></i></a>
-            <a href="#"><i class="fab fa-facebook"></i></a>
-            <a href="#"><i class="fab fa-instagram"></i></a>
-            <a href="#"><i class="fab fa-github"></i></a>
-          </div>
-        </div>
-        <div class="copyright">
-          &copy; 2023 BookBuddy. All rights reserved.
-        </div>
-      </div>
+    
+    <footer>
+      &copy; 2023 BookBot AI. All rights reserved.
     </footer>
-
-    <!-- Swiper JS -->
-    <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
-    
-    <!-- AOS Animation Library -->
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    
-    <!-- Custom JS -->
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/chatbot.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/parallax.js') }}"></script>
     
     <script>
-      // Initialize AOS
-      AOS.init({
-        duration: 800,
-        easing: 'ease-in-out',
-        once: true
+      document.addEventListener('DOMContentLoaded', function() {
+        // Set up chat functionality
+        document.getElementById('sendBtn').addEventListener('click', sendMessage);
+        document.getElementById('userInput').addEventListener('keypress', function(e) {
+          if (e.key === 'Enter') {
+            sendMessage();
+          }
+        });
+        
+        // Set up search functionality
+        document.getElementById('searchBtn').addEventListener('click', searchBooks);
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+          if (e.key === 'Enter') {
+            searchBooks();
+          }
+        });
       });
+      
+      function sendMessage() {
+        const userInput = document.getElementById('userInput');
+        const message = userInput.value.trim();
+        
+        if (message) {
+          // Add user message to chat
+          addMessage('You: ' + message);
+          
+          // Clear input
+          userInput.value = '';
+          
+          // Send message to API
+          fetch('/chat', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ message: message })
+          })
+          .then(response => response.json())
+          .then(data => {
+            // Add bot response to chat
+            addMessage('BookBot AI: ' + data.response);
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            addMessage('BookBot AI: Sorry, I encountered an error. Please try again later.');
+          });
+        }
+      }
+      
+      function addMessage(text) {
+        const chatMessages = document.getElementById('chatMessages');
+        const messageElement = document.createElement('div');
+        messageElement.textContent = text;
+        
+        chatMessages.appendChild(messageElement);
+        
+        // Scroll to bottom
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }
+      
+      function searchBooks() {
+        const query = document.getElementById('searchInput').value.trim();
+        
+        if (query) {
+          // Show loading state
+          document.getElementById('trendingBooks').innerHTML = '<p>Searching...</p>';
+          document.querySelector('.section h2').textContent = 'Search Results';
+          
+          console.log('Searching for:', query);
+          
+          // Add a timestamp to prevent caching
+          const timestamp = new Date().getTime();
+          const url = `/search?query=${encodeURIComponent(query)}&_=${timestamp}`;
+          console.log('Request URL:', url);
+          
+          fetch(url)
+            .then(response => {
+              console.log('Response status:', response.status);
+              if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+              }
+              return response.json();
+            })
+            .then(data => {
+              console.log('Search results:', data);
+              if (data.books && data.books.length > 0) {
+                const container = document.getElementById('trendingBooks');
+                container.innerHTML = '';
+                
+                data.books.forEach(book => {
+                  const bookElement = document.createElement('div');
+                  bookElement.className = 'book';
+                  
+                  const img = document.createElement('img');
+                  img.src = book.cover_url || 'https://cdn-icons-png.flaticon.com/512/2232/2232688.png';
+                  img.alt = book.title;
+                  img.onerror = function() {
+                    this.src = 'https://cdn-icons-png.flaticon.com/512/2232/2232688.png';
+                  };
+                  
+                  const title = document.createElement('div');
+                  title.className = 'book-title';
+                  title.textContent = book.title;
+                  
+                  const author = document.createElement('div');
+                  author.className = 'book-author';
+                  author.textContent = book.author;
+                  
+                  bookElement.appendChild(img);
+                  bookElement.appendChild(title);
+                  bookElement.appendChild(author);
+                  
+                  container.appendChild(bookElement);
+                });
+              } else {
+                document.getElementById('trendingBooks').innerHTML = '<p>No books found matching your search.</p>';
+              }
+            })
+            .catch(error => {
+              console.error('Error:', error);
+              document.getElementById('trendingBooks').innerHTML = `<p>Error searching for books: ${error.message}</p>`;
+            });
+        }
+      }
     </script>
   </body>
 </html>

@@ -363,6 +363,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Add initial greeting message to chatbot
     if (chatBody) {
-        addMessage('Hi there! 👋 I\'m BookBuddy, your personal book recommendation assistant. How can I help you today?<br><br>You can ask me things like:<ul class="suggestion-list"><li>Recommend me a fantasy book</li><li>What are the trending books?</li><li>Suggest a random book</li><li>Show me books by Stephen King</li></ul>');
+        addMessage('Hi there! 👋 I\'m BookBot AI, your personal book recommendation assistant. How can I help you today?<br><br>You can ask me things like:<ul class="suggestion-list"><li>Recommend me a fantasy book</li><li>What are the trending books right now?</li><li>I like books similar to Harry Potter</li></ul>', 'bot');
     }
 }); 

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BookBot API Documentation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #444;
+            margin-top: 30px;
+        }
+        .endpoint {
+            background-color: #f9f9f9;
+            border-left: 4px solid #4CAF50;
+            padding: 10px 15px;
+            margin-bottom: 20px;
+        }
+        .method {
+            font-weight: bold;
+            color: #4CAF50;
+        }
+        .url {
+            font-family: monospace;
+            background-color: #eee;
+            padding: 3px 6px;
+            border-radius: 3px;
+        }
+        .description {
+            margin-top: 10px;
+        }
+        .params {
+            margin-top: 10px;
+        }
+        .param {
+            margin-left: 20px;
+        }
+        .param-name {
+            font-weight: bold;
+        }
+        .example {
+            margin-top: 10px;
+            font-family: monospace;
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <h1>BookBot API Documentation</h1>
+    
+    <p>This documentation provides information about the available API endpoints for the BookBot application.</p>
+    
+    <h2>Book Recommendations</h2>
+    
+    <div class="endpoint">
+        <div><span class="method">GET</span> <span class="url">/api/recommendations/similar</span></div>
+        <div class="description">Get book recommendations similar to a specified book.</div>
+        <div class="params">
+            <div>Parameters:</div>
+            <div class="param"><span class="param-name">title</span> - The title of the book to find similar books for (required)</div>
+        </div>
+        <div class="example">Example: /api/recommendations/similar?title=Harry%20Potter</div>
+    </div>
+    
+    <div class="endpoint">
+        <div><span class="method">GET</span> <span class="url">/api/recommendations/genre</span></div>
+        <div class="description">Get book recommendations for a specific genre.</div>
+        <div class="params">
+            <div>Parameters:</div>
+            <div class="param"><span class="param-name">genre</span> - The genre to get recommendations for (required)</div>
+        </div>
+        <div class="example">Example: /api/recommendations/genre?genre=fantasy</div>
+    </div>
+    
+    <div class="endpoint">
+        <div><span class="method">GET</span> <span class="url">/api/recommendations/author</span></div>
+        <div class="description">Get book recommendations by a specific author.</div>
+        <div class="params">
+            <div>Parameters:</div>
+            <div class="param"><span class="param-name">author</span> - The author name to get recommendations for (required)</div>
+        </div>
+        <div class="example">Example: /api/recommendations/author?author=J.K.%20Rowling</div>
+    </div>
+    
+    <h2>Book Lists</h2>
+    
+    <div class="endpoint">
+        <div><span class="method">GET</span> <span class="url">/api/books/trending</span></div>
+        <div class="description">Get trending books.</div>
+        <div class="params">
+            <div>Parameters:</div>
+            <div class="param"><span class="param-name">limit</span> - The number of books to return (default: 5)</div>
+        </div>
+        <div class="example">Example: /api/books/trending?limit=10</div>
+    </div>
+    
+    <div class="endpoint">
+        <div><span class="method">GET</span> <span class="url">/api/books/top-rated</span></div>
+        <div class="description">Get top-rated books.</div>
+        <div class="params">
+            <div>Parameters:</div>
+            <div class="param"><span class="param-name">limit</span> - The number of books to return (default: 5)</div>
+        </div>
+        <div class="example">Example: /api/books/top-rated?limit=10</div>
+    </div>
+    
+    <div class="endpoint">
+        <div><span class="method">GET</span> <span class="url">/api/books/popular</span></div>
+        <div class="description">Get popular books.</div>
+        <div class="params">
+            <div>Parameters:</div>
+            <div class="param"><span class="param-name">limit</span> - The number of books to return (default: 5)</div>
+        </div>
+        <div class="example">Example: /api/books/popular?limit=10</div>
+    </div>
+    
+    <div class="endpoint">
+        <div><span class="method">GET</span> <span class="url">/api/books/random</span></div>
+        <div class="description">Get a random book recommendation.</div>
+        <div class="example">Example: /api/books/random</div>
+    </div>
+    
+    <h2>Book Search and Details</h2>
+    
+    <div class="endpoint">
+        <div><span class="method">GET</span> <span class="url">/api/books/search</span></div>
+        <div class="description">Search for books by title, author, or genre.</div>
+        <div class="params">
+            <div>Parameters:</div>
+            <div class="param"><span class="param-name">q</span> - The search query (required)</div>
+        </div>
+        <div class="example">Example: /api/books/search?q=Harry%20Potter</div>
+    </div>
+    
+    <div class="endpoint">
+        <div><span class="method">GET</span> <span class="url">/api/books/{book_id}</span></div>
+        <div class="description">Get detailed information about a specific book.</div>
+        <div class="params">
+            <div>Parameters:</div>
+            <div class="param"><span class="param-name">book_id</span> - The ID of the book (part of the URL)</div>
+        </div>
+        <div class="example">Example: /api/books/EcekAwAAQBAJ</div>
+    </div>
+    
+    <div class="endpoint">
+        <div><span class="method">GET</span> <span class="url">/api/book-cover/{title}</span></div>
+        <div class="description">Get the cover URL for a specific book.</div>
+        <div class="params">
+            <div>Parameters:</div>
+            <div class="param"><span class="param-name">title</span> - The title of the book (part of the URL)</div>
+        </div>
+        <div class="example">Example: /api/book-cover/Harry%20Potter</div>
+    </div>
+    
+    <h2>Chat</h2>
+    
+    <div class="endpoint">
+        <div><span class="method">POST</span> <span class="url">/api/chat</span></div>
+        <div class="description">Send a message to the chatbot and get a response.</div>
+        <div class="params">
+            <div>Request Body (JSON):</div>
+            <div class="param"><span class="param-name">message</span> - The user's message (required)</div>
+        </div>
+        <div class="example">Example: 
+<pre>{
+    "message": "Show me fantasy books"
+}</pre>
+        </div>
+    </div>
+    
+    <h2>Main Application</h2>
+    
+    <div class="endpoint">
+        <div><span class="method">GET</span> <span class="url">/</span></div>
+        <div class="description">The main application homepage.</div>
+        <div class="example">Example: /</div>
+    </div>
+    
+    <div class="endpoint">
+        <div><span class="method">POST</span> <span class="url">/chat</span></div>
+        <div class="description">Send a message to the chatbot from the main application.</div>
+        <div class="params">
+            <div>Request Body (JSON):</div>
+            <div class="param"><span class="param-name">message</span> - The user's message (required)</div>
+        </div>
+        <div class="example">Example: 
+<pre>{
+    "message": "Show me fantasy books"
+}</pre>
+        </div>
+    </div>
+    
+    <div class="endpoint">
+        <div><span class="method">GET</span> <span class="url">/search</span></div>
+        <div class="description">Search for books from the main application.</div>
+        <div class="params">
+            <div>Parameters:</div>
+            <div class="param"><span class="param-name">query</span> - The search query (required)</div>
+        </div>
+        <div class="example">Example: /search?query=Harry%20Potter</div>
+    </div>
+    
+    <div class="endpoint">
+        <div><span class="method">GET</span> <span class="url">/test</span></div>
+        <div class="description">A simple test endpoint to verify that the application is working.</div>
+        <div class="example">Example: /test</div>
+    </div>
+    
+    <h2>Common Errors</h2>
+    
+    <p>The following endpoints do not exist and will return a 404 error:</p>
+    <ul>
+        <li><code>/api/trending_books</code> - Use <code>/api/books/trending</code> instead</li>
+        <li><code>/books</code> - No general endpoint for all books</li>
+        <li><code>/api/books</code> - No general endpoint for all books</li>
+    </ul>
+    
+</body>
+</html> 
