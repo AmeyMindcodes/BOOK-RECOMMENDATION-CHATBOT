@@ -2,7 +2,7 @@
 
 BookBot AI is an intelligent chatbot designed to help book enthusiasts discover their next great read. Leveraging AI and real-time book APIs, BookBot AI provides personalized book recommendations based on various criteria such as author, genre, and content similarity.
 
-![BookBot AI Screenshot](app/static/images/BookBot%20AI.png)
+![BookBot AI Screenshot](static/bookbot-ai.png)
 
 ## Features
 
