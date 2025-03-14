@@ -74,10 +74,30 @@ def random_book():
 
 @api_bp.route('/books/<book_id>', methods=['GET'])
 def book_details(book_id):
-    details = get_book_details(book_id)
-    if details:
-        return jsonify(details)
-    return jsonify({'error': 'Book not found'}), 404
+    # Check if this is a fallback book ID
+    if book_id.startswith('fallback'):
+        try:
+            # Extract the index from the fallback ID (e.g., fallback1 -> 0)
+            index = int(book_id.replace('fallback', '')) - 1
+            from app.models.book_service import FALLBACK_BOOKS
+            
+            if 0 <= index < len(FALLBACK_BOOKS):
+                return jsonify(FALLBACK_BOOKS[index])
+            else:
+                return jsonify({'error': 'Invalid fallback book ID'}), 404
+        except (ValueError, IndexError) as e:
+            print(f"Error processing fallback book ID: {e}")
+            return jsonify({'error': 'Invalid fallback book ID'}), 404
+    
+    # If not a fallback book, proceed with normal lookup
+    try:
+        details = get_book_details(book_id)
+        if details:
+            return jsonify(details)
+        return jsonify({'error': 'Book not found'}), 404
+    except Exception as e:
+        print(f"Error in book_details endpoint: {e}")
+        return jsonify({'error': f'Error retrieving book details: {str(e)}'}), 500
 
 @api_bp.route('/book-cover/<title>', methods=['GET'])
 def book_cover(title):

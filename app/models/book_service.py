@@ -232,11 +232,6 @@ def get_recommendations_by_author(author_name, num_recommendations=5):
 @cache_result(timeout=1800)  # Cache for 30 minutes
 def get_trending_books(num_books=5):
     """Get trending books using the NYT Books API."""
-    # Return fallback data immediately to avoid delays
-    return FALLBACK_BOOKS[:num_books]
-    
-    # The code below is commented out to avoid API delays
-    """
     try:
         # Try to get trending books from NYT API
         if NYT_BOOKS_API_KEY:
@@ -314,16 +309,10 @@ def get_trending_books(num_books=5):
     except Exception as e:
         print(f"Error in get_trending_books: {e}")
         return FALLBACK_BOOKS[:num_books]
-    """
 
 @cache_result(timeout=1800)  # Cache for 30 minutes
 def get_top_rated_books(num_books=5):
     """Get top-rated books using Google Books API."""
-    # Return fallback data immediately to avoid delays
-    return FALLBACK_BOOKS[:num_books]
-    
-    # The code below is commented out to avoid API delays
-    """
     try:
         # Try to get top-rated books from Google Books API
         url = f"https://www.googleapis.com/books/v1/volumes?q=subject:fiction&orderBy=relevance&maxResults=20&key={GOOGLE_BOOKS_API_KEY}"
@@ -362,16 +351,10 @@ def get_top_rated_books(num_books=5):
     except Exception as e:
         print(f"Error in get_top_rated_books: {e}")
         return FALLBACK_BOOKS[:num_books]
-    """
 
 @cache_result(timeout=1800)  # Cache for 30 minutes
 def get_popular_books(num_books=5):
     """Get popular books using Google Books API."""
-    # Return fallback data immediately to avoid delays
-    return FALLBACK_BOOKS[:num_books]
-    
-    # The code below is commented out to avoid API delays
-    """
     try:
         # Try to get popular books from Google Books API
         url = f"https://www.googleapis.com/books/v1/volumes?q=subject:fiction&orderBy=newest&maxResults={num_books}&key={GOOGLE_BOOKS_API_KEY}"
@@ -406,7 +389,6 @@ def get_popular_books(num_books=5):
     except Exception as e:
         print(f"Error in get_popular_books: {e}")
         return FALLBACK_BOOKS[:num_books]
-    """
 
 @cache_result(timeout=3600)  # Cache for 1 hour
 def search_books(query, max_results=10):

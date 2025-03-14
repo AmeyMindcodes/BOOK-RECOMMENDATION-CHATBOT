@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: bookbot-ai
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn -c gunicorn_config.py "app:create_app()"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.9.0
+      - key: GOOGLE_BOOKS_API_KEY
+        value: AIzaSyDP3748GbW4fbYi3M9IWqetTl9DUC1jCuQ
+      - key: NYT_BOOKS_API_KEY
+        value: fpAAq87lzX04wf2g 
