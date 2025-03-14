@@ -235,3 +235,10 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 - Special thanks to the open-source community for the libraries used in this project
 - Book data provided by Google Books, Open Library, and NYT Books APIs
+
+## Author
+
+- **Amey Sanjay Golait**
+  - Email: [ameygolait123@gmail.com](mailto:ameygolait123@gmail.com)
+  - GitHub: [AmeyMindcodes](https://github.com/AmeyMindcodes/ai-book-recommender)
+  - LinkedIn: [Amey Golait](https://www.linkedin.com/in/amey-golait-6717402a2)

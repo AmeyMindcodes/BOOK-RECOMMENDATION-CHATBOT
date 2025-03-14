@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="author" content="Amey Sanjay Golait">
     <title>BookBot AI</title>
     <style>
       body {
@@ -35,6 +36,14 @@
       }
       .book {
         text-align: center;
+        cursor: pointer;
+        transition: transform 0.2s;
+        position: relative;
+        padding-bottom: 30px; /* Reduce space back to one button */
+      }
+      .book:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
       }
       .book img {
         height: 180px;
@@ -52,7 +61,29 @@
         font-style: italic;
         font-size: 12px;
         color: #666;
+        margin-bottom: 8px;
       }
+      .view-details-btn {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: #8d6e63;
+        color: white;
+        border: none;
+        border-radius: 3px;
+        padding: 4px 8px;
+        font-size: 12px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        margin: 0 auto;
+        width: 80%;
+      }
+      .view-details-btn:hover {
+        background-color: #6d4c41;
+      }
+      
       .chat-container {
         background: #fff;
         border-radius: 5px;
@@ -109,6 +140,79 @@
         font-size: 12px;
         color: #777;
       }
+      
+      /* Modal styles */
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.7);
+        overflow: auto;
+      }
+      
+      .modal-content {
+        background-color: #f9f7f1;
+        margin: 10% auto;
+        padding: 20px;
+        border-radius: 5px;
+        max-width: 600px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        position: relative;
+      }
+      
+      .close-modal {
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        font-size: 24px;
+        font-weight: bold;
+        cursor: pointer;
+        color: #5d4037;
+      }
+      
+      .book-details {
+        display: flex;
+        gap: 20px;
+      }
+      
+      .book-details-image {
+        flex: 0 0 150px;
+      }
+      
+      .book-details-image img {
+        width: 100%;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      }
+      
+      .book-details-info {
+        flex: 1;
+      }
+      
+      .book-details-title {
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 5px;
+        color: #5d4037;
+      }
+      
+      .book-details-author {
+        font-style: italic;
+        margin-bottom: 10px;
+      }
+      
+      .book-details-rating {
+        margin-bottom: 10px;
+        font-weight: bold;
+      }
+      
+      .book-details-description {
+        margin-top: 15px;
+        line-height: 1.6;
+      }
     </style>
   </head>
   <body>
@@ -128,10 +232,11 @@
       <div class="book-list" id="trendingBooks">
         <!-- Books will be loaded here -->
         {% for book in trending_books %}
-        <div class="book">
+        <div class="book" data-id="{{ book.id }}">
           <img src="{{ book.cover_url }}" alt="{{ book.title }}" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2232/2232688.png';">
           <div class="book-title">{{ book.title }}</div>
           <div class="book-author">{{ book.author }}</div>
+          <a href="https://www.google.com/search?q={{ book.title|urlencode }}+{{ book.author|urlencode }}+book" target="_blank" class="view-details-btn" onclick="event.stopPropagation();">View Details</a>
         </div>
         {% endfor %}
       </div>
@@ -150,12 +255,39 @@
       </div>
     </div>
     
+    <!-- Book Details Modal -->
+    <div id="bookModal" class="modal">
+      <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <div class="book-details">
+          <div class="book-details-image">
+            <img id="modalBookCover" src="" alt="Book cover">
+          </div>
+          <div class="book-details-info">
+            <div class="book-details-title" id="modalBookTitle"></div>
+            <div class="book-details-author" id="modalBookAuthor"></div>
+            <div class="book-details-rating" id="modalBookRating"></div>
+            <div class="book-details-year" id="modalBookYear"></div>
+            <div class="book-details-description" id="modalBookDescription"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
     <footer>
       &copy; 2023 BookBot AI. All rights reserved.
+      <div style="margin-top: 15px; text-align: center;">
+        <p>Scan to access BookBot AI on your mobile device:</p>
+        <img id="qrCode" src="" alt="QR Code" style="width: 150px; height: 150px; margin: 10px auto; display: block;">
+      </div>
     </footer>
     
     <script>
       document.addEventListener('DOMContentLoaded', function() {
+        // Generate QR code for the current URL
+        const currentUrl = window.location.href;
+        document.getElementById('qrCode').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(currentUrl)}`;
+        
         // Set up chat functionality
         document.getElementById('sendBtn').addEventListener('click', sendMessage);
         document.getElementById('userInput').addEventListener('keypress', function(e) {
@@ -171,7 +303,82 @@
             searchBooks();
           }
         });
+        
+        // Set up modal functionality
+        const modal = document.getElementById('bookModal');
+        const closeModal = document.querySelector('.close-modal');
+        
+        closeModal.addEventListener('click', function() {
+          modal.style.display = 'none';
+        });
+        
+        window.addEventListener('click', function(event) {
+          if (event.target === modal) {
+            modal.style.display = 'none';
+          }
+        });
+        
+        // Add click event listeners to all book elements
+        setupBookClickListeners();
       });
+      
+      function setupBookClickListeners() {
+        // Get all book elements
+        const bookElements = document.querySelectorAll('.book');
+        
+        // Add click event listener to each book
+        bookElements.forEach(book => {
+          book.addEventListener('click', function() {
+            const bookId = this.getAttribute('data-id');
+            if (bookId) {
+              showBookDetails(bookId);
+            }
+          });
+        });
+      }
+      
+      function showBookDetails(bookId) {
+        // Show loading state
+        document.getElementById('modalBookTitle').textContent = 'Loading...';
+        document.getElementById('modalBookAuthor').textContent = '';
+        document.getElementById('modalBookRating').textContent = '';
+        document.getElementById('modalBookYear').textContent = '';
+        document.getElementById('modalBookDescription').textContent = '';
+        document.getElementById('modalBookCover').src = 'https://cdn-icons-png.flaticon.com/512/2232/2232688.png';
+        
+        // Show the modal
+        document.getElementById('bookModal').style.display = 'block';
+        
+        console.log('Fetching book details for ID:', bookId);
+        
+        // Fetch book details using relative URL
+        fetch(`/api/books/${bookId}`)
+          .then(response => {
+            console.log('Book details response status:', response.status);
+            if (!response.ok) {
+              throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+          })
+          .then(book => {
+            console.log('Book details received:', book);
+            // Update modal with book details
+            document.getElementById('modalBookTitle').textContent = book.title;
+            document.getElementById('modalBookAuthor').textContent = book.author;
+            document.getElementById('modalBookRating').textContent = `Rating: ${book.rating ? book.rating + '/5' : 'Not rated'}`;
+            document.getElementById('modalBookYear').textContent = `Published: ${book.year}`;
+            document.getElementById('modalBookDescription').textContent = book.description;
+            document.getElementById('modalBookCover').src = book.cover_url;
+            document.getElementById('modalBookCover').onerror = function() {
+              this.src = 'https://cdn-icons-png.flaticon.com/512/2232/2232688.png';
+            };
+          })
+          .catch(error => {
+            console.error('Error fetching book details:', error);
+            document.getElementById('modalBookTitle').textContent = 'Error loading book details';
+            document.getElementById('modalBookDescription').textContent = 'Sorry, we could not load the details for this book. Please try again later.';
+          });
+      }
       
       function sendMessage() {
         const userInput = document.getElementById('userInput');
@@ -247,6 +454,7 @@
                 data.books.forEach(book => {
                   const bookElement = document.createElement('div');
                   bookElement.className = 'book';
+                  bookElement.setAttribute('data-id', book.id);
                   
                   const img = document.createElement('img');
                   img.src = book.cover_url || 'https://cdn-icons-png.flaticon.com/512/2232/2232688.png';
@@ -263,9 +471,25 @@
                   author.className = 'book-author';
                   author.textContent = book.author;
                   
+                  // Create view details button
+                  const detailsBtn = document.createElement('a');
+                  detailsBtn.className = 'view-details-btn';
+                  detailsBtn.textContent = 'View Details';
+                  detailsBtn.href = `https://www.google.com/search?q=${encodeURIComponent(book.title)}+${encodeURIComponent(book.author)}+book`;
+                  detailsBtn.target = '_blank';
+                  detailsBtn.onclick = function(e) {
+                    e.stopPropagation(); // Prevent triggering the parent's click event
+                  };
+                  
                   bookElement.appendChild(img);
                   bookElement.appendChild(title);
                   bookElement.appendChild(author);
+                  bookElement.appendChild(detailsBtn);
+                  
+                  // Add click event listener to the book element
+                  bookElement.addEventListener('click', function() {
+                    showBookDetails(book.id);
+                  });
                   
                   container.appendChild(bookElement);
                 });
@@ -280,5 +504,27 @@
         }
       }
     </script>
+    
+    <!-- Footer with Author Information -->
+    <footer class="section" style="margin-top: 40px; text-align: center; border-top: 1px solid #ddd; padding-top: 20px;">
+      <h3>Developed by Amey Sanjay Golait</h3>
+      <div class="contact-info">
+        <p>
+          <a href="mailto:ameygolait123@gmail.com" style="color: #5d4037; text-decoration: none; margin: 0 10px;">
+            <i class="fa fa-envelope"></i> ameygolait123@gmail.com
+          </a>
+          <a href="https://github.com/AmeyMindcodes/ai-book-recommender" target="_blank" style="color: #5d4037; text-decoration: none; margin: 0 10px;">
+            <i class="fa fa-github"></i> GitHub
+          </a>
+          <a href="https://www.linkedin.com/in/amey-golait-6717402a2" target="_blank" style="color: #5d4037; text-decoration: none; margin: 0 10px;">
+            <i class="fa fa-linkedin"></i> LinkedIn
+          </a>
+        </p>
+      </div>
+      <p style="font-size: 0.9em; color: #777;">© 2023 BookBot AI - All Rights Reserved</p>
+    </footer>
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
   </body>
 </html>
