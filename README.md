@@ -55,7 +55,36 @@ pip install -r requirements.txt
 python run.py
 ```
 
-The application will be available at http://127.0.0.1:5004/
+The application will be available at:
+- Local access: http://127.0.0.1:5000/
+- Network access: http://YOUR_IP_ADDRESS:5000/ (where YOUR_IP_ADDRESS is your computer's IP address on the local network)
+
+### 5. Access from other devices
+
+The application includes a QR code at the bottom of the page that you can scan with your mobile device to quickly access BookBot AI.
+
+To find your computer's IP address:
+- On macOS/Linux: Open Terminal and type `ifconfig` or `ip addr show`
+- On Windows: Open Command Prompt and type `ipconfig`
+
+Look for the IP address under your WiFi or Ethernet connection (usually starts with 192.168.x.x).
+
+### 6. Deploy to Render (Free Hosting)
+
+You can deploy BookBot AI for free on Render:
+
+1. Create a [Render account](https://render.com/)
+2. Connect your GitHub repository
+3. Click "New Web Service"
+4. Select your repository
+5. Use these settings:
+   - Name: bookbot-ai
+   - Environment: Python
+   - Build Command: `pip install -r requirements.txt`
+   - Start Command: `gunicorn -c gunicorn_config.py "app:create_app()"`
+6. Click "Create Web Service"
+
+Your application will be deployed at a URL like `https://bookbot-ai.onrender.com`
 
 ## Usage
 
@@ -206,7 +235,3 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 - Special thanks to the open-source community for the libraries used in this project
 - Book data provided by Google Books, Open Library, and NYT Books APIs
-
-## Live Demo
-
-A live demo of the application is available at: https://bookbuddy-u2y7.onrender.com
