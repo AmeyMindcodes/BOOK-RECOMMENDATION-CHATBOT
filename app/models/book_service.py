@@ -1,9 +1,5 @@
 import requests
-import os
-import json
 import random
-from dotenv import load_dotenv
-import re
 from app.utils.cache import cache_result
 
 # Load environment variables - no longer needed since we're adding keys directly
